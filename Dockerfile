@@ -30,4 +30,4 @@ EXPOSE 8000
 
 COPY ./xaolao /xaolao
 
-CMD ["uvicorn", "xaolao.app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["gunicorn", "-w", "2", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0", "xaolao.app:app"]
