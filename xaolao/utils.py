@@ -1,12 +1,18 @@
 import requests
 from tempfile import NamedTemporaryFile
 from pydub import AudioSegment
+from pydub.exceptions import PydubException
 
 def convert_audio(in_file : NamedTemporaryFile, from_format, to_format) -> NamedTemporaryFile:
-    sound = AudioSegment.from_file(in_file.name, from_format)
-    out_file = NamedTemporaryFile('w+b')
-    sound.export(out_file.name, format=to_format)
-    in_file.close()
+    try:
+        out_file = NamedTemporaryFile('w+b')
+        sound = AudioSegment.from_file(in_file.name, from_format)
+        sound.export(out_file.name, format=to_format)
+    except PydubException as e:
+        in_file.close()
+        out_file.close()
+        raise e
+
     return out_file
 
 def download_file(url : str) -> NamedTemporaryFile:
